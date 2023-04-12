@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # TODO: add a check to see if there are created files, not just modified ones
-unaddedFiles=$(git ls-files -m)
+unaddedFiles=$(git status --porcelain=v1 | awk '{print $2}')
 
 if [ -n "$unaddedFiles" ]; then
     echo "You have unadded files:"
