@@ -1,30 +1,49 @@
 #!/bin/bash
 
-# TODO: add a check to see if there are created files, not just modified ones
-unaddedFiles=$(git status --porcelain=v1 | awk '{print $2}')
+function process_repo() {
+    repo="$1"
+    echo "Processing repo: $repo"
 
-if [ -n "$unaddedFiles" ]; then
-    echo "You have unadded files:"
-    echo "$unaddedFiles"
+    pushd "$repo" > /dev/null
 
-    read -p "Do you want to add and commit them? [y/n] " response
-    if [[ $response =~ ^[Yy]$ ]]; then
-        git add .
-        read -p "Enter commit message: " message
-        git commit -m "$message"
+    unaddedFiles=$(git status --porcelain=v1 | awk '{print $2}')
 
-        echo "Files added and committed."
+    if [ -n "$unaddedFiles" ]; then
+        echo "You have unadded files:"
+        echo "$unaddedFiles"
 
-        read -p "Do you want to push? [y/n] " response
+        read -p "Do you want to add and commit them? [y/n] " response
         if [[ $response =~ ^[Yy]$ ]]; then
-            git push
-            echo "Files pushed."
+            git add .
+            read -p "Enter commit message: " message
+            git commit -m "$message"
+
+            echo "Files added and committed."
+
+            read -p "Do you want to push? [y/n] " response
+            if [[ $response =~ ^[Yy]$ ]]; then
+                git push
+                echo "Files pushed."
+            else
+                echo "Files not pushed."
+            fi
         else
-            echo "Files not pushed."
+            echo "Files not added and therefore not committed."
         fi
-    else
-        echo "Files not added and therefore not committed."
     fi
+
+    popd > /dev/null
+}
+
+if [ "$1" == "-r" ] && [ -n "$2" ]; then
+    rootDir=$2
+    for repo in "$rootDir"/*; do
+        if [ -d "$repo" ] && [ -d "$repo/.git" ]; then
+            process_repo "$repo"
+        fi
+    done
+else
+    process_repo "$(pwd)"
 fi
 
 read -p "Do you want to kill all code editors? [y/n] " response
