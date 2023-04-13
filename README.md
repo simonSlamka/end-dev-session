@@ -5,7 +5,7 @@ This script helps you to close your workday by checking for unadded files in you
 ## Usage
 
 ```bash
-./close_workday.sh [-r <path_to_directory>]
+./endsession.sh [-r <path_to_directory>]
 ```
 
 ## Options
@@ -23,7 +23,7 @@ The script is designed to work with the code (Visual Studio Code) and codium (VS
 Download or clone the repository containing the close_workday.sh script.
 Make the script executable:
 
-    `chmod +x close_workday.sh`
+    `chmod +x endsession.sh`
 
 Optionally, you can create an alias or move the script to a location in your $PATH for easier access.
 
